@@ -52,6 +52,7 @@ def main(x, y, coefficient, intercept, learning_rate, epochs):
         cost_history.append(cost_function(x,y,coefficient,intercept))
         sns.lineplot(x,predictions,color='red')
 
+    plt.savefig('gradiant decent.jpg')
     plt.show()
     return cost_history
 
@@ -61,4 +62,5 @@ if __name__ == '__main__':
     cost_history = main(X, Y, coeff, inter, alpha, epochs)
     plt.figure(figsize=[12,12],dpi=200)
     plt.plot(cost_history,np.arange(0,epochs))
+    plt.savefig('cost history.jpg')
     plt.show()
