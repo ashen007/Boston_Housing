@@ -26,14 +26,14 @@ def prediction(x, coefficient, intercept):
 
 if __name__ == '__main__':
     coefficient, intercept = mean_square(x_train, y_train)
-    #
-    # for i in range(100):
-    #     coefficient,intercept = gradient_decent.gradient_decent(x_train,y_train,coefficient,intercept,0.001)
-
-    predictions = prediction(x_test,coefficient,intercept)
     plt.figure(figsize=[8,8],dpi=200)
     sns.scatterplot(x_test,y_test)
-    sns.lineplot(x_test,predictions)
+
+    for i in range(100):
+        coefficient,intercept = gradient_decent.gradient_decent(x_train,y_train,coefficient,intercept,0.001)
+        predictions = prediction(x_test,coefficient,intercept)
+        sns.lineplot(x_test,predictions,color='red')
+
     plt.savefig('uni-varient.jpg')
     plt.show()
     print(coefficient, intercept)
