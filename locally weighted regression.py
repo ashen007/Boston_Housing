@@ -35,8 +35,8 @@ def independent_data(data):
 
 data, target = independent_data(get_data())
 x_train, x_test, y_train, y_test = train_test_split(data, target, test_size=0.2, random_state=42)
-X = np.mat(x_train['AGE'])
-Y = np.mat(y_train)
+X = np.mat(x_test['AGE'])
+Y = np.mat(y_test)
 one = np.ones((1, Y.shape[1]))
 X = np.hstack((one.T, X.T))
 
@@ -69,14 +69,33 @@ def localWeightRegression(x, y, k):
     return pred
 
 
-predictions = localWeightRegression(X,Y,0.1)
-print(r2_score(y_train,predictions))
+def stand_reg(x, y):
+    y = y.T
+    XTX = np.dot(x.T, x)
 
-plt.figure(figsize=[8,8],dpi=200)
-plt.scatter(x_train['AGE'],y_train,color='#060E26',edgecolors='#DFE4F2')
-plt.plot(X,predictions,color='#F29F05')
-plt.savefig('graphs/LWR-model.png')
+    if np.linalg.det(XTX) == 0.0:
+        print('can not calculate inverse')
+        return
+    ws = np.dot(np.linalg.inv(XTX), (np.dot(x.T, y)))
+    return ws
+
+
+ws_lrg = stand_reg(X, Y)
+one = np.ones((len(x_test),1))
+x = np.hstack((one,np.mat(x_test.AGE).T))
+prediction_lrg = np.dot(x, ws_lrg)
+print(r2_score(y_test.values,prediction_lrg)*100)
+
+predictions = localWeightRegression(X, Y, 0.5)
+print(r2_score(y_test, predictions) * 100)
+
+plt.figure(figsize=[8, 8], dpi=200)
+plt.scatter(x_test['AGE'], y_test, color='#060E26', edgecolors='#DFE4F2')
+plt.plot(X, predictions, color='#F29F05')
+plt.plot(x_test['AGE'], prediction_lrg, color='#8C0D0D')
+plt.savefig('graphs/LWR-vs-SLR.png')
 plt.show()
+
 # p = localWeightRegression(X, train_Y, 0.1)
 # print(p)
 
