@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
 from statsmodels.stats.outliers_influence import variance_inflation_factor
+from sklearn.metrics import r2_score
 
 
 def get_data():
@@ -30,7 +32,7 @@ def independent_data(data):
     return data, target
 
 
-def standReg(x, y):
+def stand_reg(x, y):
     xMatrix = np.array(x)
     yMatrix = np.array(y).T
     XTX = np.dot(xMatrix.T, xMatrix)
@@ -43,5 +45,6 @@ def standReg(x, y):
 
 
 df, target_feature = independent_data(get_data())
-ws = standReg(df.values, target_feature.values)
-print(np.dot(np.asarray(df),ws))
+ws = stand_reg(df.values, target_feature.values)
+predicts = np.dot(np.asarray(df),ws)
+print(r2_score(target_feature,predicts))
