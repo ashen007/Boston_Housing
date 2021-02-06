@@ -10,6 +10,8 @@ def get_data():
 
 
 def independent_data(data):
+    target = data['MEDV']
+    data = data.drop('MEDV', axis=1)
     while True:
         vfi = pd.DataFrame()
         vfi['features'] = data.columns
@@ -25,8 +27,21 @@ def independent_data(data):
             # print(vfi)
             # print(f"drop: {vfi.iloc[0]['features']}")
             data.drop(vfi.iloc[0]['features'], axis=1, inplace=True)
-    return data
+    return data, target
 
 
-df = independent_data(get_data())
-print(df)
+def standReg(x, y):
+    xMatrix = np.array(x)
+    yMatrix = np.array(y).T
+    XTX = np.dot(xMatrix.T, xMatrix)
+
+    if np.linalg.det(XTX) == 0.0:
+        print('can not calculate inverse')
+        return
+    ws = np.dot(np.linalg.inv(XTX), (np.dot(xMatrix.T, yMatrix)))
+    return ws
+
+
+df, target_feature = independent_data(get_data())
+ws = standReg(df.values, target_feature.values)
+print(np.dot(np.asarray(df),ws))
