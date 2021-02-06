@@ -36,9 +36,14 @@ def independent_data(data):
 data, target = independent_data(get_data())
 x_train, x_test, y_train, y_test = train_test_split(data, target, test_size=0.2, random_state=42)
 X = np.mat(x_test['AGE'])
+X_lrg = np.mat(x_train['AGE'])
 Y = np.mat(y_test)
+Y_lrg = np.mat(y_train)
+
 one = np.ones((1, Y.shape[1]))
 X = np.hstack((one.T, X.T))
+one_lrg = np.ones((1, Y_lrg.shape[1]))
+X_lrg = np.hstack((one_lrg.T, X_lrg.T))
 
 
 # function to calculate W weight diagnal Matric used in calculation of predictions
@@ -80,11 +85,11 @@ def stand_reg(x, y):
     return ws
 
 
-ws_lrg = stand_reg(X, Y)
-one = np.ones((len(x_test),1))
-x = np.hstack((one,np.mat(x_test.AGE).T))
+ws_lrg = stand_reg(X_lrg, Y_lrg)
+one = np.ones((len(x_test), 1))
+x = np.hstack((one, np.mat(x_test.AGE).T))
 prediction_lrg = np.dot(x, ws_lrg)
-print(r2_score(y_test.values,prediction_lrg)*100)
+print(r2_score(y_test.values, prediction_lrg) * 100)
 
 predictions = localWeightRegression(X, Y, 0.5)
 print(r2_score(y_test, predictions) * 100)
