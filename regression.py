@@ -46,5 +46,5 @@ def stand_reg(x, y):
 
 df, target_feature = independent_data(get_data())
 ws = stand_reg(df.values, target_feature.values)
-predicts = np.dot(np.asarray(df),ws)
-print(r2_score(target_feature,predicts))
+predicts = np.dot(np.asarray(df), ws)
+print(r2_score(target_feature, predicts))
