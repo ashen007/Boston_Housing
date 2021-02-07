@@ -23,7 +23,7 @@ def train(x, y):
     x_mean = np.mean(x, axis=0)
     x_variance = np.var(x, axis=0)
     y_mean = np.mean(y, axis=0)
-    epochs = 1
+    epochs = 30
     y = y - y_mean
     x = (x - x_mean) / x_variance
 
@@ -31,7 +31,8 @@ def train(x, y):
     w = np.zeros((epochs, x.shape[1]))
 
     for i in range(epochs):
-        ws = ridge_regression(x, y, 0.5)
+        print((i-0.5))
+        ws = ridge_regression(x, y, (i-0.5))
         w[i, :] = ws.T
 
     return w
@@ -50,7 +51,7 @@ def prediction(x, ws):
     predicts = []
 
     for i in range(ridge_weights.shape[0]):
-        predicts.append(np.dot(x,ridge_weights[i]))
+        predicts.append(np.dot(x,ws[i]))
     return predicts
 
 
