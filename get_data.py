@@ -3,7 +3,7 @@ import pandas as pd
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 
-def get_data():
+def get():
     data = pd.read_csv('./data.csv', usecols=['CRIM', 'ZN', 'INDUS', 'CHAS', 'NOX', 'AGE',
                                               'DIS', 'RAD', 'TAX', 'PTRATIO', 'B', 'LSTAT', 'MEDV'], na_filter=True)
     return data
@@ -20,11 +20,7 @@ def independent_data(data):
         vfi.reset_index(inplace=True)
 
         if all(vfi['vfi value'] < 10):
-            # print('all independent')
             break
         else:
-            # print('dependent features')
-            # print(vfi)
-            # print(f"drop: {vfi.iloc[0]['features']}")
             data.drop(vfi.iloc[0]['features'], axis=1, inplace=True)
     return data, target
