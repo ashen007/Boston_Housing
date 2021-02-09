@@ -1,14 +1,13 @@
 # gradient decent function
 import numpy as np
 import seaborn as sns
+import get_data
 from matplotlib import pyplot as plt
+from sklearn.model_selection import train_test_split
 
-X = np.array([8, 7, 6, 3, 8, 5, 2, 1, 3, 9, 1, 2, 0, 9, 1, 2])
-Y = np.array([0, 2, 3, 9, 8, 3, 0, 4, 3, 2, 8, 2, 3, 0, 4, 7, ])
-coeff = 1
-inter = 2
-alpha = 0.001
-epochs = 100
+
+data,target = get_data.independent_data(get_data.get())
+train_x,test_x,train_y,test_y = train_test_split(data,target,test_size=0.2,random_state=42)
 
 
 def gradient_decent(x, y, coefficient, intercept, learning_rate):
@@ -30,37 +29,68 @@ def gradient_decent(x, y, coefficient, intercept, learning_rate):
     return coefficient, intercept
 
 
-def visualize(x, y):
-    plt.figure(figsize=[8, 8], dpi=200)
-    sns.scatterplot(x, y)
+def cost_function(X, Y, beta):
+    cost = np.sum((X.dot(beta) - Y) ** 2) / 2 / len(Y)
+    return cost
 
 
-def prediction(x, coefficient, intercept):
-    return x * coefficient + intercept
+def batch_gradient_decent(X, Y, beta, learning_rate, epochs):
+    cost_hist = np.ones(epochs)
 
-
-def cost_function(x, y, coefficient, intercept):
-    return y - (x * coefficient + intercept)
-
-
-def main(x, y, coefficient, intercept, learning_rate, epochs):
-    # call gradient decent as we needed (epochs)
-    cost_history = []
     for i in range(epochs):
-        coefficient, intercept = gradient_decent(x, y, coefficient, intercept, learning_rate)
-        predictions = prediction(x,coefficient,intercept)
-        cost_history.append(cost_function(x,y,coefficient,intercept))
-        sns.lineplot(x,predictions,color='red')
+        hypothesis = np.dot(X, beta)
+        loss = hypothesis - Y
+        gradient = np.dot(X.T, loss) / len(Y)
+        beta = beta - gradient * learning_rate
+        cost_hist[i] = cost_function(X, Y, beta)
 
-    plt.savefig('gradiant decent.jpg')
-    plt.show()
-    return cost_history
+    return beta, cost_hist
 
 
-if __name__ == '__main__':
-    visualize(X, Y)
-    cost_history = main(X, Y, coeff, inter, alpha, epochs)
-    plt.figure(figsize=[12,12],dpi=200)
-    plt.plot(cost_history,np.arange(0,epochs))
-    plt.savefig('cost history.jpg')
-    plt.show()
+def train(X, Y, learning_rate, epochs):
+    m, n = X.shape
+    X = np.array(X)
+    Y = np.array(Y).flatten()
+    X = np.hstack([np.ones((m,1)),X])
+    print(X)
+    beta = np.zeros((n+1))
+    beta,cost = batch_gradient_decent(X,Y,beta,learning_rate,epochs)
+
+    return beta,cost
+
+
+b,c = train(train_x,train_y,0.0001,10001)
+# def visualize(x, y):
+#     plt.figure(figsize=[8, 8], dpi=200)
+#     sns.scatterplot(x, y)
+#
+#
+# def prediction(x, coefficient, intercept):
+#     return x * coefficient + intercept
+#
+#
+# def cost_function(x, y, coefficient, intercept):
+#     return y - (x * coefficient + intercept)
+
+
+# def main(x, y, coefficient, intercept, learning_rate, epochs):
+#     # call gradient decent as we needed (epochs)
+#     cost_history = []
+#     for i in range(epochs):
+#         coefficient, intercept = gradient_decent(x, y, coefficient, intercept, learning_rate)
+#         predictions = prediction(x, coefficient, intercept)
+#         cost_history.append(cost_function(x, y, coefficient, intercept))
+#         sns.lineplot(x, predictions, color='red')
+#
+#     plt.savefig('gradiant decent.jpg')
+#     plt.show()
+#     return cost_history
+#
+#
+# if __name__ == '__main__':
+#     visualize(X, Y)
+#     cost_history = main(X, Y, coeff, inter, alpha, epochs)
+#     plt.figure(figsize=[12, 12], dpi=200)
+#     plt.plot(cost_history, np.arange(0, epochs))
+#     plt.savefig('cost history.jpg')
+#     plt.show()
